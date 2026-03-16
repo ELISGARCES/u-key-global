@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>U-KEY GLOBAL | Dashboard Pro</title>
+    <style>
+        :root { --gold: #d4af37; --bg: #050505; --card: #111; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #fff; display: flex; justify-content: center; padding: 20px; margin: 0; }
+        .vault-card { background: var(--card); border: 2px solid var(--gold); border-radius: 20px; padding: 25px; width: 450px; box-shadow: 0 0 50px rgba(212,175,55,0.2); border-bottom: 6px solid var(--gold); }
+        .logo { color: var(--gold); font-size: 32px; font-weight: bold; letter-spacing: 5px; text-align: center; margin: 0; }
+        .slogan { font-size: 10px; color: #777; text-align: center; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 15px; }
+        
+        .status-panel { background: #1a1a1a; padding: 12px; border-radius: 12px; font-size: 11px; border: 1px solid #333; margin-bottom: 10px; }
+        .status-line { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .dot { height: 8px; width: 8px; background: #00ff00; border-radius: 50%; display: inline-block; margin-right: 5px; box-shadow: 0 0 10px #00ff00; }
+        
+        .ip-box { background: #000; padding: 10px; border-radius: 8px; font-size: 10px; color: #00ff00; border: 1px solid #222; text-align: left; line-height: 1.5; }
+        
+        .section-title { font-size: 10px; color: var(--gold); margin: 20px 0 10px 5px; text-transform: uppercase; font-weight: bold; border-left: 2px solid var(--gold); padding-left: 8px; }
+        
+        .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .btn-action { padding: 12px; border: 1px solid #222; border-radius: 10px; background: #1a1a1a; color: #eee; font-size: 12px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .btn-action:hover { border-color: var(--gold); background: #222; transform: translateX(3px); }
+        .favicon { width: 18px; height: 18px; border-radius: 3px; }
+        
+        .btn-add { width: 100%; margin-top: 20px; padding: 12px; background: #111; border: 1px dashed var(--gold); color: var(--gold); border-radius: 10px; cursor: pointer; font-size: 11px; font-weight: bold; text-transform: uppercase; }
+        .btn-add:hover { background: var(--gold); color: #000; }
+        
+        .search-input { width: 100%; padding: 10px; background: #000; border: 1px solid #333; color: white; border-radius: 8px; margin-top: 15px; font-size: 12px; box-sizing: border-box; }
+    </style>
+</head>
+<body>
+    <div class="vault-card">
+        <div class="header">
+            <h1 class="logo">U-KEY GLOBAL</h1>
+            <div class="slogan">Tu Identidad es tu Única Llave</div>
+        </div>
+
+        <div class="status-panel">
+            <div class="status-line">
+                <span><span class="dot"></span> SISTEMA ACTIVO</span>
+                <span>ID: <b style="color:var(--gold);">ELIS-1966-VEN</b></span>
+            </div>
+            <div id="ip-data" class="ip-box">⌛ RASTREANDO SEÑAL IP...</div>
+        </div>
+
+        <div class="section-title">Banca y Finanzas Globales</div>
+        <div class="btn-group">
+            <button class="btn-action" onclick="lanzar('https://www.banesconline.com')"><img src="https://www.google.com/s2/favicons?domain=banesco.com&sz=64" class="favicon"> Banesco</button>
+            <button class="btn-action" onclick="lanzar('https://www.mercantilmovilinternet.com')"><img src="https://www.google.com/s2/favicons?domain=mercantilbanco.com&sz=64" class="favicon"> Mercantil</button>
+            <button class="btn-action" onclick="lanzar('https://www.binance.com')"><img src="https://www.google.com/s2/favicons?domain=binance.com&sz=64" class="favicon"> Binance</button>
+            <button class="btn-action" onclick="lanzar('https://www.paypal.com')"><img src="https://www.google.com/s2/favicons?domain=paypal.com&sz=64" class="favicon"> PayPal</button>
+            <button class="btn-action" onclick="lanzar('https://www.wise.com')"><img src="https://www.google.com/s2/favicons?domain=wise.com&sz=64" class="favicon"> Wise</button>
+            <button class="btn-action" onclick="lanzar('https://www.payoneer.com')"><img src="https://www.google.com/s2/favicons?domain=payoneer.com&sz=64" class="favicon"> Payoneer</button>
+        </div>
+
+        <div class="section-title">Gobierno y Trámites</div>
+        <div class="btn-group">
+            <button class="btn-action" onclick="lanzar('https://declaraciones.seniat.gob.ve/')"><img src="https://www.google.com/s2/favicons?domain=seniat.gob.ve&sz=64" class="favicon"> SENIAT</button>
+            <button class="btn-action" onclick="lanzar('https://tramites.saime.gob.ve/')"><img src="https://www.google.com/s2/favicons?domain=saime.gob.ve&sz=64" class="favicon"> SAIME</button>
+        </div>
+
+        <div class="section-title">Redes y Servicios</div>
+        <div class="btn-group">
+            <button class="btn-action" onclick="lanzar('https://mail.google.com')"><img src="https://www.google.com/s2/favicons?domain=gmail.com&sz=64" class="favicon"> Gmail</button>
+            <button class="btn-action" onclick="lanzar('https://web.whatsapp.com')"><img src="https://www.google.com/s2/favicons?domain=whatsapp.com&sz=64" class="favicon"> WhatsApp</button>
+            <button class="btn-action" onclick="lanzar('https://hpanel.hostinger.com')"><img src="https://www.google.com/s2/favicons?domain=hostinger.com&sz=64" class="favicon"> Hostinger</button>
+            <button class="btn-action" onclick="lanzar('https://www.facebook.com')"><img src="https://www.google.com/s2/favicons?domain=facebook.com&sz=64" class="favicon"> Facebook</button>
+        </div>
+
+        <input type="text" class="search-input" placeholder="🔍 Escribe nombre de empresa o banco...">
+        <button class="btn-add" onclick="alert('Abriendo U-STORE...')">+ AÑADIR SERVICIO (U-STORE)</button>
+
+        <div style="margin-top:25px; text-align:center; font-size:9px; color:#444; letter-spacing:1px; text-transform:uppercase;">
+            U-KEY v1.6 | Zero-Knowledge Security | Barquisimeto
+        </div>
+    </div>
+
+    <script>
+        // RASTREADOR DE IP DINÁMICO
+        async function rastrearIP() {
+            try {
+                const res = await fetch('https://ipapi.co/json/');
+                const data = await res.json();
+                document.getElementById('ip-data').innerHTML = `
+                    📍 IP: ${data.ip}<br>
+                    🌍 UBICACIÓN: ${data.city}, ${data.region}, ${data.country_name}<br>
+                    📡 PROVEEDOR: ${data.org}
+                `;
+            } catch (e) {
+                document.getElementById('ip-data').innerHTML = "📍 SEÑAL IP PROTEGIDA (VPN ACTIVA)";
+            }
+        }
+        
+        function lanzar(url) {
+            window.open(url, '_blank');
+        }
+
+        window.onload = rastrearIP;
+    </script>
+</body>
+</html>

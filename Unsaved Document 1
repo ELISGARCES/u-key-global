@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>U-KEY GLOBAL | Registro</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #0a0a0a; display: flex; justify-content: center; padding: 20px; color: white; }
+        .reg-card { background: #1a1a1a; border: 1px solid #d4af37; border-radius: 20px; padding: 25px; width: 430px; text-align: center; box-shadow: 0 0 30px rgba(212, 175, 55, 0.1); border-bottom: 6px solid #d4af37; position: relative; }
+        h2 { color: #d4af37; font-size: 26px; letter-spacing: 2px; margin-bottom: 5px; text-transform: uppercase; }
+        .field-label { text-align: left; display: block; font-size: 10px; color: #777; margin: 8px 0 4px 5px; text-transform: uppercase; font-weight: bold; }
+        input, select { width: 100%; padding: 11px; background: #050505; border: 1px solid #333; color: white; border-radius: 8px; outline: none; box-sizing: border-box; font-size: 13px; }
+        input:focus { border-color: #00ff00; }
+        .search-box { position: relative; width: 100%; margin-bottom: 5px; }
+        .search-box input { padding-left: 35px; border-color: #d4af37; font-size: 12px; background: #111; }
+        .identity-row { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 8px; align-items: end; }
+        .btn-reg { background: #d4af37; color: #000; padding: 16px; width: 100%; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 25px; font-size: 16px; transition: 0.3s; text-transform: uppercase; }
+        .forgot-link { display: block; text-align: right; font-size: 9px; color: #d4af37; text-decoration: none; margin-top: 3px; }
+        #capa-verificacion { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #1a1a1a; border-radius: 20px; z-index: 100; flex-direction: column; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; border: 2px solid #00ff00; }
+    </style>
+</head>
+<body>
+    <div class="reg-card" id="mi-panel">
+        <div id="capa-verificacion">
+            <h3 style="color:#00ff00; text-shadow: 0 0 10px #00ff00;">🔒 VERIFICACIÓN NEÓN</h3>
+            <p style="font-size:14px;">Introduce el código enviado a tu Gmail</p>
+            <input type="text" id="codigoEntrada" placeholder="000000" style="text-align:center; font-size:24px; border-color:#00ff00; color:#00ff00; background:black; letter-spacing:10px;">
+            <button class="btn-reg" style="background:#00ff00; width:80%;" onclick="activarBoveda()">ACTIVAR AHORA</button>
+            <button onclick="cerrarVentana()" style="background:none; border:none; color:white; margin-top:15px; cursor:pointer; font-size:10px;">[ Volver al Registro ]</button>
+        </div>
+
+        <div id="contenido-registro">
+            <h2>U-KEY GLOBAL</h2>
+            <p style="color:#777; font-size:11px;">Registro Único de Identidad</p>
+            
+            <span class="field-label">Nombre y Apellido</span>
+            <input type="text" id="regNombre" placeholder="Elis Garcés">
+
+            <span class="field-label">Correo GMAIL</span>
+            <input type="email" id="regEmail" placeholder="usuario@gmail.com">
+            <a href="#" class="forgot-link">¿Olvidaste tu correo?</a>
+
+            <span class="field-label">Contraseña Maestra</span>
+            <input type="password" id="regPass" placeholder="Seguridad total">
+            <a href="#" class="forgot-link">¿Olvidaste tu contraseña?</a>
+
+            <span class="field-label">País</span>
+            <div class="search-box">
+                <input type="text" onkeyup="filtrar()" id="search" placeholder="Buscar país...">
+            </div>
+            <select id="countrySelect" size="4">
+                <option value="+58" selected>🇻🇪 Venezuela (+58)</option>
+                <option value="+51">🇵🇪 Perú (+51)</option>
+                <option value="+57">🇨🇴 Colombia (+57)</option>
+                <option value="+54">🇦🇷 Argentina (+54)</option>
+                <option value="+34">🇪🇸 España (+34)</option>
+                <option value="+1">🇺🇸 Estados Unidos (+1)</option>
+                <option value="+52">🇲🇽 México (+52)</option>
+            </select>
+
+            <span class="field-label">Teléfono WhatsApp</span>
+            <input type="text" id="regTlf" placeholder="Ej: 4141234567">
+
+            <div class="identity-row">
+                <div><span class="field-label">DNI</span><input type="text" id="regDni"></div>
+                <div><span class="field-label">PIN</span><input type="password" id="p1" maxlength="4"></div>
+                <div><span class="field-label">Conf.</span><input type="password" id="p2" maxlength="4"></div>
+            </div>
+            <a href="#" class="forgot-link">¿Olvidaste DNI/PIN?</a>
+
+            <button class="btn-reg" onclick="solicitar()">REGISTRAR IDENTIDAD</button>
+        </div>
+    </div>
+
+    <script>
+        let codigoReal = "";
+
+        function filtrar() {
+            let f = document.getElementById("search").value.toUpperCase();
+            let s = document.getElementById("countrySelect");
+            let o = s.getElementsByTagName("option");
+            for(let i=0; i<o.length; i++) o[i].style.display = o[i].text.toUpperCase().includes(f) ? "" : "none";
+        }
+
+        async function solicitar() {
+            const email = document.getElementById('regEmail').value;
+            const nombre = document.getElementById('regNombre').value;
+            try {
+                const res = await fetch('http://localhost:8080/enviar_verificacion', {
+                    method: 'POST',
+                    body: JSON.stringify({ nombre: nombre, email: email })
+                });
+                const data = await res.json();
+                if(res.ok) {
+                    codigoReal = data.codigo_servidor;
+                    document.getElementById('capa-verificacion').style.display = 'flex';
+                }
+            } catch (e) { alert("Servidor Python apagado"); }
+        }
+
+        function activarBoveda() {
+            const ingresado = document.getElementById('codigoEntrada').value;
+            if(ingresado === codigoReal && codigoReal !== "") {
+                // AQUÍ ES DONDE OCURRE LA MAGIA DEL PASO 2:
+                document.getElementById('mi-panel').innerHTML = `
+                    <h1 style="color:#d4af37">🔓 BÓVEDA ABIERTA</h1>
+                    <p>Bienvenido Elis, identidad confirmada.</p>
+                    <p style="font-size:12px; color:#00ff00;">Redireccionando al H-PANEL...</p>
+                `;
+                // En el futuro, aquí pondremos la línea para saltar al siguiente archivo
+            } else {
+                alert("Código incorrecto. Revisa tu correo.");
+            }
+        }
+
+        function cerrarVentana() { document.getElementById('capa-verificacion').style.display = 'none'; }
+    </script>
+</body>
+</html>

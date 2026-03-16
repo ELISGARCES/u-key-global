@@ -1,0 +1,15 @@
+{
+  "name": "U-KEY GLOBAL",
+  "short_name": "U-Key",
+  "start_url": "registro_u_key.html",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#d4af37",
+  "icons": [
+    {
+      "src": "https://www.google.com/s2/favicons?domain=google.com&sz=128",
+      "sizes": "128x128",
+      "type": "image/png"
+    }
+  ]
+}
