@@ -85,35 +85,41 @@
         async function solicitar() {
             const email = document.getElementById('regEmail').value;
             const nombre = document.getElementById('regNombre').value;
+            
+            if(!email || !nombre) { alert("Por favor llena Nombre y Correo"); return; }
+
             try {
+                // Conectando directamente con tu servidor eterno en Render
                 const res = await fetch('https://ukey-servidor.onrender.com/enviar_verificacion', {
                     method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ nombre: nombre, email: email })
                 });
-                const data = await res.json();
+
                 if(res.ok) {
+                    const data = await res.json();
                     codigoReal = data.codigo_servidor;
                     document.getElementById('capa-verificacion').style.display = 'flex';
+                } else {
+                    alert("El servidor en la nube está activo pero respondió con error. Código: " + res.status);
                 }
-            } catch (e) { alert("Servidor Python apagado"); }
+            } catch (e) { 
+                console.error(e);
+                alert("Error de conexión. Asegúrate de que el servidor en Render diga 'Live' y que tu internet esté estable."); 
+            }
         }
 
         function activarBoveda() {
             const ingresado = document.getElementById('codigoEntrada').value;
             if(ingresado === codigoReal && codigoReal !== "") {
-                
-                // 1. Mostramos el mensaje de éxito
                 document.getElementById('mi-panel').innerHTML = `
                     <h1 style="color:#d4af37">🔓 BÓVEDA ABIERTA</h1>
-                    <p>Bienvenido Elis, identidad confirmada.</p>
-                    <p style="font-size:12px; color:#00ff00;">Redireccionando al H-PANEL...</p>
+                    <p>Identidad confirmada. Bienvenido al sistema.</p>
+                    <p style="font-size:12px; color:#00ff00;">Redireccionando...</p>
                 `;
-                
-                // 2. LA MAGIA: Espera 2 segundos y salta al dashboard
                 setTimeout(() => {
                     window.location.href = "dashboard.html";
                 }, 2000);
-
             } else {
                 alert("Código incorrecto. Revisa tu correo.");
             }
