@@ -22,9 +22,8 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
             
             codigo = str(random.randint(100000, 999999))
             
-            # CONFIGURACIÓN ESTRICTA
             remitente = "elisgarces1966@gmail.com"
-            password = "yyuy yugv tjbh fkms"  # VERIFICA ESTO LETRA POR LETRA
+            password = "yyuy yugv tjbh fkms"
             
             msg = EmailMessage()
             msg['Subject'] = f'Codigo U-KEY: {codigo}'
@@ -32,7 +31,6 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
             msg['To'] = data['email']
             msg.set_content(f"Hola {data['nombre']},\n\nTu codigo es: {codigo}")
 
-            # Intento de envío con manejo de error detallado
             with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
                 smtp.login(remitente, password)
                 smtp.send_message(msg)
@@ -44,7 +42,7 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
             self.wfile.write(json.dumps({"codigo_servidor": codigo}).encode())
             
         except Exception as e:
-            print(f"ERROR INTERNO: {e}") # Esto saldrá en la consola de Render
+            print(f"ERROR_LOG: {e}")
             self.send_response(500)
             self.send_header('Access-Control-Allow-Origin', '*')
             self.send_header('Content-Type', 'application/json')
