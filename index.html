@@ -86,7 +86,7 @@
             const email = document.getElementById('regEmail').value;
             const nombre = document.getElementById('regNombre').value;
             try {
-                const res = await fetch('http://localhost:8080/enviar_verificacion', {
+                const res = await fetch('https://ukey-servidor.onrender.com/enviar_verificacion', {
                     method: 'POST',
                     body: JSON.stringify({ nombre: nombre, email: email })
                 });
