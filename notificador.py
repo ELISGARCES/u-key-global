@@ -3,11 +3,12 @@ import socketserver
 import json
 import smtplib
 import random
-import os  # <-- Esto es nuevo para Render
+import os
 from email.message import EmailMessage
 
 class MyHandler(http.server.BaseHTTPRequestHandler):
     def do_OPTIONS(self):
+        # ESTO ES LO QUE FALTA: Los permisos para que Render acepte a GitHub
         self.send_response(200)
         self.send_header('Access-Control-Allow-Origin', '*')
         self.send_header('Access-Control-Allow-Methods', 'POST, OPTIONS')
@@ -21,9 +22,9 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
         
         codigo = str(random.randint(100000, 999999))
         
-        # COLOCA TUS DATOS AQUÍ DE NUEVO (CON COMILLAS)
+        # USA TU CORREO Y TU CLAVE DE 16 LETRAS
         remitente = "elisgarces1966@gmail.com" 
-        password = "tu_clave_de_16_letras_aqui"
+        password = "yyuy yugv tjbh fkms" 
         
         msg = EmailMessage()
         msg['Subject'] = f'Tu Código U-KEY: {codigo}'
@@ -37,15 +38,17 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
                 smtp.send_message(msg)
             
             self.send_response(200)
+            # PERMISOS TAMBIÉN AQUÍ
             self.send_header('Access-Control-Allow-Origin', '*')
             self.send_header('Content-Type', 'application/json')
             self.end_headers()
             self.wfile.write(json.dumps({"codigo_servidor": codigo}).encode())
-        except Exception:
+        except Exception as e:
             self.send_response(500)
+            self.send_header('Access-Control-Allow-Origin', '*')
             self.end_headers()
+            print(f"Error: {e}")
 
-# Esta línea es la que permite que Render funcione correctamente
 puerto = int(os.environ.get("PORT", 8080))
 with socketserver.TCPServer(("", puerto), MyHandler) as httpd:
     print(f"Servidor U-KEY Activo en Puerto {puerto}")
