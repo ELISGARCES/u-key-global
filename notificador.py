@@ -6,7 +6,6 @@ import random
 import os
 from email.message import EmailMessage
 
-# CLASE PARA REUTILIZAR EL PUERTO Y EVITAR EL ERROR 98
 class ThreadingHTTPServer(socketserver.ThreadingMixIn, http.server.HTTPServer):
     allow_reuse_address = True
 
@@ -25,7 +24,7 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
             data = json.loads(post_data)
             codigo = str(random.randint(100000, 999999))
             
-            # --- CONFIGURACION DE GMAIL ---
+            # CONFIGURACIÓN DIRECTA CON TU LLAVE NUEVA
             remitente = "elisgarces1966@gmail.com"
             password = "dcrj jzya cuar ncvm" 
             
@@ -33,14 +32,14 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
             msg['Subject'] = f'Codigo U-KEY: {codigo}'
             msg['From'] = remitente
             msg['To'] = data['email']
-            msg.set_content(f"Hola {data['nombre']},\n\nTu codigo de seguridad es: {codigo}")
+            msg.set_content(f"Hola {data['nombre']},\n\nTu codigo de registro U-KEY es: {codigo}")
 
-            # INTENTO DE ENVIO
+            # Usamos el puerto 465 con SSL
             with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
                 smtp.login(remitente, password)
                 smtp.send_message(msg)
             
-            print(f"EXITO TOTAL: Enviado a {data['email']}")
+            print(f"EXITO: Enviado a {data['email']}")
 
             self.send_response(200)
             self.send_header('Access-Control-Allow-Origin', '*')
@@ -55,8 +54,7 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(json.dumps({"error": str(e)}).encode())
 
-# ARRANQUE DEL SERVIDOR
 puerto = int(os.environ.get("PORT", 10000))
 httpd = ThreadingHTTPServer(("", puerto), MyHandler)
-print(f"Motor UKEY activo en puerto {puerto}")
+print(f"Servidor activo en puerto {puerto}")
 httpd.serve_forever()
