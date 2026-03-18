@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>U-KEY GLOBAL | Registro Mundial</title>
+    <title>U-KEY GLOBAL | Panel de Registro</title>
     <style>
         body { font-family: 'Segoe UI', sans-serif; background: #0a0a0a; display: flex; justify-content: center; padding: 20px; color: white; }
         .reg-card { background: #1a1a1a; border: 1px solid #d4af37; border-radius: 20px; padding: 25px; width: 450px; text-align: center; box-shadow: 0 0 30px rgba(212, 175, 55, 0.1); border-bottom: 6px solid #d4af37; position: relative; }
@@ -19,40 +19,38 @@
 <body>
     <div class="reg-card" id="mi-panel">
         <div id="capa-verificacion">
-            <h3 style="color:#00ff00;">🔒 VERIFICACIÓN NEÓN</h3>
-            <p>Introduce el código enviado a tu Gmail</p>
+            <h3 style="color:#00ff00;">🔒 VERIFICACIÓN</h3>
+            <p>Escribe el código de tu Gmail</p>
             <input type="text" id="codigoEntrada" placeholder="000000" style="text-align:center; font-size:24px; color:#00ff00;">
-            <button class="btn-reg" style="background:#00ff00; width:80%;" onclick="activarBoveda()">ACTIVAR AHORA</button>
+            <button class="btn-reg" style="background:#00ff00; width:80%;" onclick="activarBoveda()">ACTIVAR</button>
         </div>
 
         <div id="contenido-registro">
             <h2>U-KEY GLOBAL</h2>
-            <p style="font-size:10px; color:#555; margin-bottom: 20px;">SISTEMA DE SEGURIDAD MUNDIAL</p>
+            <p style="font-size:10px; color:#555;">SISTEMA INTERNACIONAL</p>
             
-            <span class="field-label">Nombre Completo</span>
-            <input type="text" id="regNombre" placeholder="Ej. Elis Garces">
+            <span class="field-label">Nombre y Apellido</span>
+            <input type="text" id="regNombre" placeholder="Tu nombre">
             
-            <span class="field-label">Correo Electrónico GMAIL</span>
+            <span class="field-label">Correo GMAIL</span>
             <input type="email" id="regEmail" placeholder="usuario@gmail.com">
             
             <div class="flex-row">
                 <div style="width: 45%;">
-                    <span class="field-label">País / Área</span>
+                    <span class="field-label">País/Área</span>
                     <select id="regArea">
+                        <option value="+49">🇩🇪 +49 (Ale)</option>
                         <option value="+54">🇦🇷 +54 (Arg)</option>
                         <option value="+56">🇨🇱 +56 (Chi)</option>
                         <option value="+57">🇨🇴 +57 (Col)</option>
                         <option value="+34">🇪🇸 +34 (Esp)</option>
-                        <option value="+52">🇲🇽 +52 (Mex)</option>
-                        <option value="+507">🇵🇦 +507 (Pan)</option>
-                        <option value="+51">🇵🇪 +51 (Per)</option>
                         <option value="+1">🇺🇸 +1 (USA)</option>
-                        <option value="+58" selected>🇻🇪 +58 (Ven)</option>
-                        </select>
+                        <option value="+58" selected>	🇻🇪 +58 (Ven)</option>
+                    </select>
                 </div>
                 <div style="width: 55%;">
                     <span class="field-label">WhatsApp</span>
-                    <input type="text" id="regTlf" placeholder="4121234567">
+                    <input type="text" id="regTlf" placeholder="Número">
                 </div>
             </div>
 
@@ -70,18 +68,18 @@
             <div class="flex-row">
                 <div style="width: 55%;">
                     <span class="field-label">Clave Especial</span>
-                    <input type="password" id="regClaveEspecial" placeholder="Secreta">
+                    <input type="password" id="regClaveEspecial" placeholder="Clave">
                 </div>
                 <div style="width: 45%;">
                     <span class="field-label">Cédula / DNI</span>
-                    <input type="text" id="regDNI" placeholder="Documento">
+                    <input type="text" id="regDNI" placeholder="Número">
                 </div>
             </div>
 
-            <button class="btn-reg" onclick="solicitar()">REGISTRAR IDENTIDAD</button>
+            <button class="btn-reg" onclick="solicitar()">REGISTRAR</button>
 
-            <a href="#" class="link-footer">¿Olvidó su Clave Especial?</a>
-            <a href="#" class="link-footer">¿Olvidó su Correo o PIN?</a>
+            <a href="#" class="link-footer">¿Olvidó Clave Especial?</a>
+            <a href="#" class="link-footer">¿Olvidó Correo o PIN?</a>
         </div>
     </div>
 
@@ -90,7 +88,7 @@
         async function solicitar() {
             const email = document.getElementById('regEmail').value;
             const nombre = document.getElementById('regNombre').value;
-            if(!email || !nombre) { alert("⚠️ Llena nombre y correo."); return; }
+            if(!email || !nombre) { alert("Llena los datos"); return; }
 
             try {
                 const res = await fetch('https://ukey-servidor.onrender.com/enviar_verificacion', {
@@ -104,18 +102,18 @@
                     codigoReal = data.codigo_servidor;
                     document.getElementById('capa-verificacion').style.display = 'flex';
                 } else {
-                    alert("Error 500: El motor falló al enviar el correo.");
+                    alert("Error 500: El correo no salió. Revisa los Logs.");
                 }
             } catch (e) {
-                alert("Error de Conexión: El servidor está dormido.");
+                alert("Error de Conexión: Render está dormido.");
             }
         }
 
         function activarBoveda() {
             const ingresado = document.getElementById('codigoEntrada').value;
             if(ingresado === codigoReal && codigoReal !== "") {
-                document.getElementById('mi-panel').innerHTML = "<h1 style='color:#d4af37'>🔓 IDENTIDAD VERIFICADA</h1>";
-            } else { alert("Código Incorrecto."); }
+                document.getElementById('mi-panel').innerHTML = "<h1 style='color:#d4af37'>🔓 VERIFICADO</h1>";
+            } else { alert("Código mal puesto"); }
         }
     </script>
 </body>
