@@ -23,6 +23,7 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
             codigo = str(random.randint(100000, 999999))
             
             remitente = "elisgarces1966@gmail.com"
+            # Asegúrate de que esta clave de 16 letras no tenga espacios extra
             password = "yyuy yugv tjbh fkms"
             
             msg = EmailMessage()
@@ -49,6 +50,8 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(json.dumps({"error": str(e)}).encode())
 
-puerto = int(os.environ.get("PORT", 8080))
+# Cambiamos el puerto por defecto a 10000 para Render
+puerto = int(os.environ.get("PORT", 10000))
 with socketserver.TCPServer(("", puerto), MyHandler) as httpd:
+    print(f"Servidor activo en puerto {puerto}")
     httpd.serve_forever()
