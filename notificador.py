@@ -19,11 +19,11 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
             content_length = int(self.headers['Content-Length'])
             post_data = self.rfile.read(content_length)
             data = json.loads(post_data)
-            
             codigo = str(random.randint(100000, 999999))
             
-            # DATOS DE GMAIL - REVISA QUE TU CLAVE SIGA SIENDO: yyuy yugv tjbh fkms
+            # REVISA ESTO ELIS: ¿Tu correo es exactamente este?
             remitente = "elisgarces1966@gmail.com"
+            # REVISA ESTO ELIS: ¿La contraseña de 16 letras es esta?
             password = "yyuy yugv tjbh fkms"
             
             msg = EmailMessage()
@@ -32,10 +32,13 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
             msg['To'] = data['email']
             msg.set_content(f"Hola {data['nombre']},\n\nTu codigo es: {codigo}")
 
-            # Conexión segura con Gmail
+            print(f"Intentando enviar correo a: {data['email']}") # Mensaje en LOGS
+            
             with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
                 smtp.login(remitente, password)
                 smtp.send_message(msg)
+            
+            print("¡CORREO ENVIADO CON EXITO!") # Mensaje en LOGS
             
             self.send_response(200)
             self.send_header('Access-Control-Allow-Origin', '*')
@@ -44,14 +47,14 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
             self.wfile.write(json.dumps({"codigo_servidor": codigo}).encode())
             
         except Exception as e:
-            print(f"ERROR_LOG_CRITICO: {e}")
+            # ESTO ES LO QUE NECESITO QUE ME COPIES DESPUES
+            print(f"DIAGNOSTICO_FALLO: {str(e)}") 
             self.send_response(500)
             self.send_header('Access-Control-Allow-Origin', '*')
             self.end_headers()
             self.wfile.write(json.dumps({"error": str(e)}).encode())
 
-# Forzamos el puerto 10000 que es el estándar de Render
 puerto = int(os.environ.get("PORT", 10000))
 with socketserver.TCPServer(("", puerto), MyHandler) as httpd:
-    print(f"Servidor U-KEY en linea en puerto {puerto}")
+    print(f"Servidor arrancado en puerto {puerto}")
     httpd.serve_forever()
