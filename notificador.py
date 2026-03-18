@@ -22,8 +22,8 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
             
             codigo = str(random.randint(100000, 999999))
             
+            # DATOS DE GMAIL - REVISA QUE TU CLAVE SIGA SIENDO: yyuy yugv tjbh fkms
             remitente = "elisgarces1966@gmail.com"
-            # Asegúrate de que esta clave de 16 letras no tenga espacios extra
             password = "yyuy yugv tjbh fkms"
             
             msg = EmailMessage()
@@ -32,6 +32,7 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
             msg['To'] = data['email']
             msg.set_content(f"Hola {data['nombre']},\n\nTu codigo es: {codigo}")
 
+            # Conexión segura con Gmail
             with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
                 smtp.login(remitente, password)
                 smtp.send_message(msg)
@@ -43,15 +44,14 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
             self.wfile.write(json.dumps({"codigo_servidor": codigo}).encode())
             
         except Exception as e:
-            print(f"ERROR_LOG: {e}")
+            print(f"ERROR_LOG_CRITICO: {e}")
             self.send_response(500)
             self.send_header('Access-Control-Allow-Origin', '*')
-            self.send_header('Content-Type', 'application/json')
             self.end_headers()
             self.wfile.write(json.dumps({"error": str(e)}).encode())
 
-# Cambiamos el puerto por defecto a 10000 para Render
+# Forzamos el puerto 10000 que es el estándar de Render
 puerto = int(os.environ.get("PORT", 10000))
 with socketserver.TCPServer(("", puerto), MyHandler) as httpd:
-    print(f"Servidor activo en puerto {puerto}")
+    print(f"Servidor U-KEY en linea en puerto {puerto}")
     httpd.serve_forever()
