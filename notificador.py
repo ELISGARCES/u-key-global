@@ -1,9 +1,4 @@
-import http.server
-import socketserver
-import json
-import smtplib
-import random
-import os
+import http.server, socketserver, json, smtplib, random, os
 from email.message import EmailMessage
 
 class ThreadingHTTPServer(socketserver.ThreadingMixIn, http.server.HTTPServer):
@@ -20,11 +15,9 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
     def do_POST(self):
         try:
             content_length = int(self.headers['Content-Length'])
-            post_data = self.rfile.read(content_length)
-            data = json.loads(post_data)
+            data = json.loads(self.rfile.read(content_length))
             codigo = str(random.randint(100000, 999999))
             
-            # CONFIGURACIÓN DIRECTA CON TU LLAVE NUEVA
             remitente = "elisgarces1966@gmail.com"
             password = "dcrj jzya cuar ncvm" 
             
@@ -32,15 +25,18 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
             msg['Subject'] = f'Codigo U-KEY: {codigo}'
             msg['From'] = remitente
             msg['To'] = data['email']
-            msg.set_content(f"Hola {data['nombre']},\n\nTu codigo de registro U-KEY es: {codigo}")
+            msg.set_content(f"Hola {data['nombre']}, tu codigo es: {codigo}")
 
-            # Usamos el puerto 465 con SSL
-            with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-                smtp.login(remitente, password)
-                smtp.send_message(msg)
+            print(f"INTENTO: Enviando desde {remitente} a {data['email']}...")
+
+            # USAMOS PUERTO 587 QUE ES MÁS COMPATIBLE CON RENDER
+            server = smtplib.SMTP('smtp.gmail.com', 587)
+            server.starttls() 
+            server.login(remitente, password)
+            server.send_message(msg)
+            server.quit()
             
-            print(f"EXITO: Enviado a {data['email']}")
-
+            print("¡EXITO TOTAL!")
             self.send_response(200)
             self.send_header('Access-Control-Allow-Origin', '*')
             self.send_header('Content-Type', 'application/json')
@@ -48,7 +44,8 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
             self.wfile.write(json.dumps({"codigo_servidor": codigo}).encode())
             
         except Exception as e:
-            print(f"DIAGNOSTICO_FALLO: {str(e)}")
+            # ESTO ES LO QUE NECESITO LEER EN LOS LOGS
+            print(f"DIAGNOSTICO_GMAIL: {str(e)}")
             self.send_response(500)
             self.send_header('Access-Control-Allow-Origin', '*')
             self.end_headers()
@@ -56,5 +53,4 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
 
 puerto = int(os.environ.get("PORT", 10000))
 httpd = ThreadingHTTPServer(("", puerto), MyHandler)
-print(f"Servidor activo en puerto {puerto}")
 httpd.serve_forever()
