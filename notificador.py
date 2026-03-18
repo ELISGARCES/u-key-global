@@ -21,25 +21,21 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
             data = json.loads(post_data)
             codigo = str(random.randint(100000, 999999))
             
-            # --- DATOS CRITICOS ---
             remitente = "elisgarces1966@gmail.com"
             password = "yyuy yugv tjbh fkms"
-            # ----------------------
             
             msg = EmailMessage()
             msg['Subject'] = f'Codigo U-KEY: {codigo}'
             msg['From'] = remitente
             msg['To'] = data['email']
-            msg.set_content(f"Hola {data['nombre']},\n\nTu codigo es: {codigo}")
-
-            print(f"DEBUG: Intentando enviar correo a {data['email']}")
+            msg.set_content(f"Hola {data['nombre']},\n\nTu codigo de verificacion es: {codigo}")
 
             with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
                 smtp.login(remitente, password)
                 smtp.send_message(msg)
             
-            print("DEBUG: ¡CORREO ENVIADO!")
-            
+            print(f"CORREO ENVIADO A {data['email']}")
+
             self.send_response(200)
             self.send_header('Access-Control-Allow-Origin', '*')
             self.send_header('Content-Type', 'application/json')
@@ -47,8 +43,7 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
             self.wfile.write(json.dumps({"codigo_servidor": codigo}).encode())
             
         except Exception as e:
-            # ESTA LINEA ES LA QUE NECESITO SI FALLA
-            print(f"FALLO_SISTEMA: {str(e)}")
+            print(f"DIAGNOSTICO_FALLO: {str(e)}")
             self.send_response(500)
             self.send_header('Access-Control-Allow-Origin', '*')
             self.end_headers()
@@ -56,5 +51,5 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
 
 puerto = int(os.environ.get("PORT", 10000))
 with socketserver.TCPServer(("", puerto), MyHandler) as httpd:
-    print(f"Servidor en puerto {puerto}")
+    print(f"Servidor U-KEY activo en puerto {puerto}")
     httpd.serve_forever()
