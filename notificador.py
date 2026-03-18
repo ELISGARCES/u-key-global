@@ -28,14 +28,14 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
             msg['Subject'] = f'Codigo U-KEY: {codigo}'
             msg['From'] = remitente
             msg['To'] = data['email']
-            msg.set_content(f"Hola {data['nombre']},\n\nTu codigo de verificacion es: {codigo}")
+            msg.set_content(f"Hola {data['nombre']},\n\nTu codigo es: {codigo}")
 
             with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
                 smtp.login(remitente, password)
                 smtp.send_message(msg)
             
-            print(f"CORREO ENVIADO A {data['email']}")
-
+            print(f"EXITO: Correo enviado a {data['email']}")
+            
             self.send_response(200)
             self.send_header('Access-Control-Allow-Origin', '*')
             self.send_header('Content-Type', 'application/json')
@@ -43,13 +43,19 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
             self.wfile.write(json.dumps({"codigo_servidor": codigo}).encode())
             
         except Exception as e:
-            print(f"DIAGNOSTICO_FALLO: {str(e)}")
+            print(f"FALLO_SISTEMA: {str(e)}")
             self.send_response(500)
             self.send_header('Access-Control-Allow-Origin', '*')
             self.end_headers()
             self.wfile.write(json.dumps({"error": str(e)}).encode())
 
+# CONFIGURACION PARA FORZAR LA PUERTA (PUERTO)
+class ThreadingHTTPServer(socketserver.ThreadingMixIn, http.server.HTTPServer):
+    allow_reuse_address = True # ESTA ES LA LLAVE MAESTRA
+
 puerto = int(os.environ.get("PORT", 10000))
-with socketserver.TCPServer(("", puerto), MyHandler) as httpd:
-    print(f"Servidor U-KEY activo en puerto {puerto}")
-    httpd.serve_forever()
+server_address = ("", puerto)
+httpd = ThreadingHTTPServer(server_address, MyHandler)
+
+print(f"Servidor U-KEY arrancado legalmente en puerto {puerto}")
+httpd.serve_forever()
