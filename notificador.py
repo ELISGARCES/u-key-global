@@ -18,6 +18,7 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
             data = json.loads(self.rfile.read(content_length))
             codigo = str(random.randint(100000, 999999))
             
+            # --- TUS DATOS ---
             remitente = "elisgarces1966@gmail.com"
             password = "dcrj jzya cuar ncvm" 
             
@@ -25,18 +26,15 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
             msg['Subject'] = f'Codigo U-KEY: {codigo}'
             msg['From'] = remitente
             msg['To'] = data['email']
-            msg.set_content(f"Hola {data['nombre']}, tu codigo es: {codigo}")
+            msg.set_content(f"Hola {data['nombre']}, tu codigo de registro es: {codigo}")
 
-            print(f"INTENTO: Enviando desde {remitente} a {data['email']}...")
-
-            # USAMOS PUERTO 587 QUE ES MÁS COMPATIBLE CON RENDER
-            server = smtplib.SMTP('smtp.gmail.com', 587)
-            server.starttls() 
-            server.login(remitente, password)
-            server.send_message(msg)
-            server.quit()
+            # CONEXIÓN TIPO 2 (Más compatible con Render)
+            print(f"DEBUG: Intentando conectar con Gmail...")
+            with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+                smtp.login(remitente, password)
+                smtp.send_message(msg)
             
-            print("¡EXITO TOTAL!")
+            print("DEBUG: ¡ENVÍO EXITOSO!")
             self.send_response(200)
             self.send_header('Access-Control-Allow-Origin', '*')
             self.send_header('Content-Type', 'application/json')
@@ -44,7 +42,7 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
             self.wfile.write(json.dumps({"codigo_servidor": codigo}).encode())
             
         except Exception as e:
-            # ESTO ES LO QUE NECESITO LEER EN LOS LOGS
+            # ESTO ES LO QUE NECESITO SI VUELVE A FALLAR
             print(f"DIAGNOSTICO_GMAIL: {str(e)}")
             self.send_response(500)
             self.send_header('Access-Control-Allow-Origin', '*')
@@ -53,4 +51,5 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
 
 puerto = int(os.environ.get("PORT", 10000))
 httpd = ThreadingHTTPServer(("", puerto), MyHandler)
+print(f"Motor activo en puerto {puerto}")
 httpd.serve_forever()
