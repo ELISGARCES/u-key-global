@@ -3,14 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>U-KEY GLOBAL | Registro</title>
+    <title>U-KEY GLOBAL | Registro Profesional</title>
     <style>
         body { font-family: 'Segoe UI', sans-serif; background: #0a0a0a; display: flex; justify-content: center; padding: 20px; color: white; }
         .reg-card { background: #1a1a1a; border: 1px solid #d4af37; border-radius: 20px; padding: 25px; width: 430px; text-align: center; box-shadow: 0 0 30px rgba(212, 175, 55, 0.1); border-bottom: 6px solid #d4af37; position: relative; }
         h2 { color: #d4af37; font-size: 26px; letter-spacing: 2px; margin-bottom: 5px; text-transform: uppercase; }
         .field-label { text-align: left; display: block; font-size: 10px; color: #777; margin: 8px 0 4px 5px; text-transform: uppercase; font-weight: bold; }
-        input, select { width: 100%; padding: 11px; background: #050505; border: 1px solid #333; color: white; border-radius: 8px; outline: none; box-sizing: border-box; font-size: 13px; }
+        input, select { width: 100%; padding: 11px; background: #050505; border: 1px solid #333; color: white; border-radius: 8px; outline: none; box-sizing: border-box; font-size: 13px; margin-bottom: 5px; }
         .btn-reg { background: #d4af37; color: #000; padding: 16px; width: 100%; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 25px; font-size: 16px; transition: 0.3s; text-transform: uppercase; }
+        .link-footer { font-size: 11px; color: #d4af37; text-decoration: none; display: block; margin-top: 10px; opacity: 0.7; }
         #capa-verificacion { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #1a1a1a; border-radius: 20px; z-index: 100; flex-direction: column; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; border: 2px solid #00ff00; }
     </style>
 </head>
@@ -25,11 +26,43 @@
 
         <div id="contenido-registro">
             <h2>U-KEY GLOBAL</h2>
-            <span class="field-label">Nombre y Apellido</span>
-            <input type="text" id="regNombre" placeholder="Tu Nombre">
-            <span class="field-label">Correo GMAIL</span>
-            <input type="email" id="regEmail" placeholder="tu-correo@gmail.com">
+            <p style="font-size:10px; color:#555;">SISTEMA DE SEGURIDAD AVANZADO</p>
+            
+            <span class="field-label">Nombre Completo</span>
+            <input type="text" id="regNombre" placeholder="Ej. Elis Garces">
+            
+            <span class="field-label">Correo Electrónico GMAIL</span>
+            <input type="email" id="regEmail" placeholder="usuario@gmail.com">
+            
+            <div style="display: flex; gap: 10px;">
+                <div style="width: 30%;">
+                    <span class="field-label">Área</span>
+                    <input type="text" id="regArea" value="+58">
+                </div>
+                <div style="width: 70%;">
+                    <span class="field-label">Teléfono WhatsApp</span>
+                    <input type="text" id="regTlf" placeholder="4121234567">
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+                <div style="width: 50%;">
+                    <span class="field-label">PIN de Seguridad</span>
+                    <input type="password" id="regPin" placeholder="****">
+                </div>
+                <div style="width: 50%;">
+                    <span class="field-label">Repetir PIN</span>
+                    <input type="password" id="regPinConfirm" placeholder="****">
+                </div>
+            </div>
+
+            <span class="field-label">Clave Especial (Alfanumérica)</span>
+            <input type="password" id="regClaveEspecial" placeholder="Clave secreta">
+
             <button class="btn-reg" onclick="solicitar()">REGISTRAR IDENTIDAD</button>
+
+            <a href="#" class="link-footer">¿Olvidó su Clave Especial?</a>
+            <a href="#" class="link-footer">¿Olvidó su Correo o PIN?</a>
         </div>
     </div>
 
@@ -38,7 +71,11 @@
         async function solicitar() {
             const email = document.getElementById('regEmail').value;
             const nombre = document.getElementById('regNombre').value;
-            if(!email || !nombre) { alert("Llena los datos"); return; }
+            const pin = document.getElementById('regPin').value;
+            const pinConfirm = document.getElementById('regPinConfirm').value;
+
+            if(!email || !nombre || !pin) { alert("⚠️ Complete todos los campos."); return; }
+            if(pin !== pinConfirm) { alert("❌ Los PIN no coinciden."); return; }
 
             try {
                 const res = await fetch('https://ukey-servidor.onrender.com/enviar_verificacion', {
@@ -52,18 +89,18 @@
                     codigoReal = data.codigo_servidor;
                     document.getElementById('capa-verificacion').style.display = 'flex';
                 } else {
-                    alert("Error 500: El servidor en Render falló al enviar el correo.");
+                    alert("Error 500: El servidor no pudo enviar el correo.");
                 }
             } catch (e) {
-                alert("Error de Conexión: El servidor está dormido o apagado.");
+                alert("Error de Conexión: Verifique que Render diga LIVE.");
             }
         }
 
         function activarBoveda() {
             const ingresado = document.getElementById('codigoEntrada').value;
             if(ingresado === codigoReal && codigoReal !== "") {
-                document.getElementById('mi-panel').innerHTML = "<h1 style='color:#d4af37'>🔓 BÓVEDA ABIERTA</h1>";
-            } else { alert("Código mal puesto"); }
+                document.getElementById('mi-panel').innerHTML = "<h1 style='color:#d4af37'>🔓 IDENTIDAD VERIFICADA</h1><p>Bienvenido al Sistema U-KEY</p>";
+            } else { alert("Código Incorrecto."); }
         }
     </script>
 </body>
