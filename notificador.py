@@ -16,33 +16,42 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
                 data = json.loads(self.rfile.read(content_length))
                 codigo = str(random.randint(100000, 999999))
                 
+                # CONFIGURACIÓN REFORZADA
+                remitente = "elisgarces1966@gmail.com"
+                password = "dcrj jzya cuar ncvm"
+                
                 msg = EmailMessage()
-                msg['Subject'] = f'Tu Codigo U-KEY: {codigo}'
-                msg['From'] = "elisgarces1966@gmail.com"
+                msg['Subject'] = f'Codigo U-KEY: {codigo}'
+                msg['From'] = remitente
                 msg['To'] = data['email']
-                msg.set_content(f"Hola {data['nombre']},\n\nTu código de verificación global es: {codigo}\n\nU-KEY System.")
+                msg.set_content(f"Hola {data['nombre']},\n\nTu codigo de acceso U-KEY es: {codigo}")
 
-                # Conexión reforzada con Gmail
-                with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-                    smtp.login("elisgarces1966@gmail.com", "dcrj jzya cuar ncvm")
-                    smtp.send_message(msg)
+                # Conexión via STARTTLS (Puerto 587) - Suele fallar menos en Render
+                server = smtplib.SMTP('smtp.gmail.com', 587)
+                server.starttls() 
+                server.login(remitente, password)
+                server.send_message(msg)
+                server.quit()
                 
                 self.send_response(200)
                 self.send_header('Access-Control-Allow-Origin', '*')
                 self.send_header('Content-Type', 'application/json')
                 self.end_headers()
                 self.wfile.write(json.dumps({"codigo_servidor": codigo}).encode())
-                print(f"Código enviado con éxito a {data['email']}")
+                print(f"EXITO: Codigo {codigo} enviado a {data['email']}")
 
             except Exception as e:
-                print(f"ERROR CRÍTICO: {str(e)}")
+                print(f"ERROR_GMAIL: {str(e)}")
                 self.send_response(500)
                 self.send_header('Access-Control-Allow-Origin', '*')
                 self.end_headers()
                 self.wfile.write(json.dumps({"error": str(e)}).encode())
 
-# Forzar puerto de Render
+# CLASE ESPECIAL PARA EVITAR EL ERROR "ADDRESS ALREADY IN USE"
+class ReusableTCPServer(socketserver.TCPServer):
+    allow_reuse_address = True
+
 puerto = int(os.environ.get("PORT", 10000))
-with socketserver.TCPServer(("", puerto), MyHandler) as httpd:
+with ReusableTCPServer(("", puerto), MyHandler) as httpd:
     print(f"Servidor U-KEY operativo en puerto {puerto}")
     httpd.serve_forever()
