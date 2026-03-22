@@ -16,22 +16,19 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
                 data = json.loads(self.rfile.read(content_length))
                 codigo = str(random.randint(100000, 999999))
                 
-                # CONFIGURACIÓN REFORZADA
                 remitente = "elisgarces1966@gmail.com"
-                password = "dcrj jzya cuar ncvm"
+                password = "xkvm xqgd pobn soei"
                 
                 msg = EmailMessage()
                 msg['Subject'] = f'Codigo U-KEY: {codigo}'
                 msg['From'] = remitente
                 msg['To'] = data['email']
-                msg.set_content(f"Hola {data['nombre']},\n\nTu codigo de acceso U-KEY es: {codigo}")
+                msg.set_content(f"Hola {data['nombre']},\n\nTu codigo es: {codigo}")
 
-                # Conexión via STARTTLS (Puerto 587) - Suele fallar menos en Render
-                server = smtplib.SMTP('smtp.gmail.com', 587)
-                server.starttls() 
-                server.login(remitente, password)
-                server.send_message(msg)
-                server.quit()
+                # UN SOLO CAMINO: PUERTO 465 (EL MÁS SEGURO)
+                with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+                    smtp.login(remitente, password)
+                    smtp.send_message(msg)
                 
                 self.send_response(200)
                 self.send_header('Access-Control-Allow-Origin', '*')
@@ -47,7 +44,6 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(json.dumps({"error": str(e)}).encode())
 
-# CLASE ESPECIAL PARA EVITAR EL ERROR "ADDRESS ALREADY IN USE"
 class ReusableTCPServer(socketserver.TCPServer):
     allow_reuse_address = True
 
