@@ -17,7 +17,7 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
                 codigo = str(random.randint(100000, 999999))
                 
                 remitente = "elisgarces1966@gmail.com"
-                password = "xkvm xqgd pobn soei"
+                password = "xkvm xqgd pobn soei" # Tu nueva llave de ayer
                 
                 msg = EmailMessage()
                 msg['Subject'] = f'Codigo U-KEY: {codigo}'
@@ -25,8 +25,9 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
                 msg['To'] = data['email']
                 msg.set_content(f"Hola {data['nombre']},\n\nTu codigo es: {codigo}")
 
-                # UN SOLO CAMINO: PUERTO 465 (EL MÁS SEGURO)
-                with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+                # INTENTO DE CONEXIÓN CON REINTENTO
+                print(f"Intentando enviar correo a {data['email']}...")
+                with smtplib.SMTP_SSL('smtp.gmail.com', 465, timeout=15) as smtp:
                     smtp.login(remitente, password)
                     smtp.send_message(msg)
                 
@@ -35,14 +36,17 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
                 self.send_header('Content-Type', 'application/json')
                 self.end_headers()
                 self.wfile.write(json.dumps({"codigo_servidor": codigo}).encode())
-                print(f"EXITO: Codigo {codigo} enviado a {data['email']}")
+                print(f"ÉXITO TOTAL: {codigo}")
 
             except Exception as e:
-                print(f"ERROR_GMAIL: {str(e)}")
+                error_msg = str(e)
+                print(f"DIAGNÓSTICO: {error_msg}")
                 self.send_response(500)
                 self.send_header('Access-Control-Allow-Origin', '*')
+                self.send_header('Content-Type', 'application/json')
                 self.end_headers()
-                self.wfile.write(json.dumps({"error": str(e)}).encode())
+                # Esto enviará el error real a tu celular para que lo leamos
+                self.wfile.write(json.dumps({"error": error_msg}).encode())
 
 class ReusableTCPServer(socketserver.TCPServer):
     allow_reuse_address = True
