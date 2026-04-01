@@ -114,11 +114,69 @@
             }
         }
 
-        function activarBoveda() {
-            if(document.getElementById('codigoEntrada').value === codigoReal) {
-                document.getElementById('mi-panel').innerHTML = "<div style='padding:50px;'><h1 style='color:#d4af37'>🔓 IDENTIDAD VERIFICADA</h1></div>";
-            } else { alert("Código incorrecto."); }
-        }
-    </script>
-</body>
-</html>
+            function activarBoveda() {
+    if(document.getElementById('codigoEntrada').value === codigoReal) {
+        // Sonido visual de éxito y limpieza de pantalla
+        const panel = document.getElementById('mi-panel');
+        panel.style.borderColor = "#d4af37";
+        
+        panel.innerHTML = `
+            <div id="dashboard-u">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                    <h2 style="margin:0; font-size:18px;">U-KEY DASHBOARD</h2>
+                    <span id="reloj" style="color:#d4af37; font-family:monospace; font-size:12px;"></span>
+                </div>
+                
+                <div style="background:#000; padding:10px; border-radius:10px; margin-bottom:20px; border-left:4px solid #d4af37;">
+                    <p style="font-size:10px; color:#777; margin:0; text-align:left;">SISTEMA ACTIVO ID: <span style="color:#fff;">ELIS-1966-VEN</span></p>
+                    <p style="font-size:10px; color:#777; margin:0; text-align:left;">CONEXIÓN: <span style="color:#00ff00;">ENCRIPTADA (BARQUISIMETO)</span></p>
+                </div>
+
+                <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:15px; margin-top:20px;">
+                    <div class="app-icon" onclick="alert('Conectando con Banesco...')">
+                        <div style="background:#004a99; height:50px; border-radius:12px; display:flex; justify-content:center; align-items:center; font-weight:bold; font-size:20px;">B</div>
+                        <span style="font-size:9px; display:block; margin-top:5px;">BANESCO</span>
+                    </div>
+                    <div class="app-icon" onclick="alert('Conectando con Mercantil...')">
+                        <div style="background:#1d2165; height:50px; border-radius:12px; display:flex; justify-content:center; align-items:center; font-weight:bold; font-size:20px;">M</div>
+                        <span style="font-size:9px; display:block; margin-top:5px;">MERCANTIL</span>
+                    </div>
+                    <div class="app-icon" onclick="alert('Abriendo Wallet...')">
+                        <div style="background:#f3ba2f; height:50px; border-radius:12px; display:flex; justify-content:center; align-items:center; font-weight:bold; font-size:20px;">₿</div>
+                        <span style="font-size:9px; display:block; margin-top:5px;">BINANCE</span>
+                    </div>
+
+                    <div class="app-icon">
+                        <div style="background:#cc0000; height:50px; border-radius:12px; display:flex; justify-content:center; align-items:center; font-size:10px;">SENIAT</div>
+                        <span style="font-size:9px; display:block; margin-top:5px;">IMPUESTOS</span>
+                    </div>
+                    <div class="app-icon">
+                        <div style="background:#333; height:50px; border-radius:12px; display:flex; justify-content:center; align-items:center; font-size:20px;">✉️</div>
+                        <span style="font-size:9px; display:block; margin-top:5px;">GMAIL</span>
+                    </div>
+                    
+                    <div class="app-icon" style="opacity:0.6; border:1px dashed #d4af37; border-radius:12px;">
+                        <div style="height:50px; display:flex; justify-content:center; align-items:center; font-size:20px;">+</div>
+                        <span style="font-size:9px; display:block; margin-top:5px;">U-STORE</span>
+                    </div>
+                </div>
+
+                <button class="btn-reg" style="margin-top:30px; background:transparent; color:#d4af37; border:1px solid #d4af37;" onclick="location.reload()">CERRAR BÓVEDA SEGURA</button>
+                
+                <p style="font-size:8px; color:#444; margin-top:15px;">U-KEY v1.0 | ZERO-KNOWLEDGE PROTOCOL</p>
+            </div>
+        `;
+        
+        // Iniciar el reloj de sesión
+        iniciarReloj();
+    } else { 
+        alert("Código incorrecto."); 
+    }
+}
+
+function iniciarReloj() {
+    setInterval(() => {
+        const now = new Date();
+        document.getElementById('reloj').innerText = "SESIÓN ACTIVA: " + now.toLocaleTimeString();
+    }, 1000);
+}
